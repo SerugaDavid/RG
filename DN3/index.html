@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DN3</title>
+</head>
+<body>
+    <canvas id="platno" width="800" height="600" style="border: black 1px solid"></canvas>
+    <input type="text" id="point-input">
+    <button id="button">Nastavi</button>
+
+    <script type="module">
+        import {Vector} from "./Vector.js";
+        import {Point} from "./Point.js";
+        import {Draw} from "./Draw.js";
+
+        const canvas = document.getElementById("platno");
+
+        let draw = new Draw(canvas, []);
+
+        const button = document.getElementById("button");
+        const textInput = document.getElementById("point-input");
+
+        button.onclick = function () {draw.addPoints(parseInt(textInput.value))};
+
+        canvas.addEventListener("mousedown", event => draw.click(event));
+        canvas.addEventListener("mouseup", event => draw.drop(event));
+
+        window.requestAnimationFrame(()=>draw.newFrame());
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Slikaj</title>
+</head>
+<body>
+    <canvas id="platno" width="800" height="600" style="border: black 1px solid"></canvas>
+    <button id="gumbek">Nov zlepek</button>
+    <p>Narejeno je do "Urejanja zlepkov", teh pa mi ni uspelo</p>
+
+    <script type="module">
+        import {Risanje} from "./Risanje.js";
+        const platno = document.getElementById("platno");
+        const xd = platno.getContext("2d");
+
+        function klik(){
+            draw.push(new Risanje(platno, xd));
+        }
+        const gumb = document.getElementById("gumbek");
+        gumb.onclick = function() {klik()};
+
+        let draw = [new Risanje(platno, xd)];
+
+        platno.addEventListener("mousedown", event => draw[draw.length-1].klik(event));
+        platno.addEventListener("mouseup", event => draw[draw.length-1].spust(event, draw));
+    </script>
+</body>
+</html>
