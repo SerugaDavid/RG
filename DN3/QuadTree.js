@@ -17,16 +17,29 @@ class QuadTree {
 
   addPoint(point) {
     // Method that adds a point to the current QuadTree node.
-    this.points.push(point);
-    if (this.capacity() > this.max){
-        this.split();
+    if (!this.rectangle.inRectangle(point)){
+      return;
+    }
+    if (this.capacity() < this.max) {
+      this.points.push(point);
+      return;
+    }
+    this.split();
+    for (const child of this.children) {
+      child.addPoint(point);
     }
   }
 
   split() {
-    // Method for spliting the QuadTree node to 4 other nodes.
-    for (let i = 0; i < 4; i++) {
-        this.children[i] = new QuadTree([new Point], this.max);
-    }
+    // Method for splitting the QuadTree node to 4 other nodes.
+    const x = this.rectangle.x;
+    const y = this.rectangle.y;
+    const w = Math.floor(this.rectangle.w / 2);
+    const h = Math.floor(this.rectangle.h / 2);
+    this.children[0] = new QuadTree([], this.max, new Rectangle(Math.floor(x/2), Math.floor(y/2), w, h)); // nw
+    this.children[1] = new QuadTree([], this.max, new Rectangle(Math.floor(x/2) + x, Math.floor(y/2), w, h)); // ne
+    this.children[2] = new QuadTree([], this.max, new Rectangle(Math.floor(x/2), Math.floor(y/2) + y, w, h)); // sw
+    this.children[3] = new QuadTree([], this.max, new Rectangle(Math.floor(x/2) + x, Math.floor(y/2) + y, w, h)); // se
+
   }
 }
