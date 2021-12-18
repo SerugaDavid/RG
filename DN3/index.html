@@ -7,7 +7,8 @@
 <body>
     <canvas id="platno" width="800" height="600" style="border: black 1px solid"></canvas>
     <input type="text" id="point-input">
-    <button id="button">Nastavi</button>
+    <button id="get-input">Nastavi</button>
+    <button id="mesh">Mreža vklop/izklop</button>
 
     <script type="module">
         import {Vector} from "./Vector.js";
@@ -18,10 +19,12 @@
 
         let draw = new Draw(canvas, []);
 
-        const button = document.getElementById("button");
         const textInput = document.getElementById("point-input");
+        const buttonInput = document.getElementById("get-input");
+        const buttonMesh = document.getElementById("mesh");
 
-        button.onclick = function () {draw.addPoints(parseInt(textInput.value))};
+        buttonInput.onclick = function () {draw.addPoints(parseInt(textInput.value))};
+        buttonMesh.onclick = function () {draw.meshSwitch()};
 
         canvas.addEventListener("mousedown", event => draw.click(event));
         canvas.addEventListener("mouseup", event => draw.drop(event));

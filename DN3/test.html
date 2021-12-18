@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>test</title>
+</head>
+<body>
+<script type="module">
+  import {Vector} from "./Vector.js";
+  import {Point} from "./Point.js";
+  import {Rectangle} from "./Rectangle.js";
+  import {QuadTree} from "./QuadTree.js";
+
+  const tmp = new Vector([1,1]);
+  console.log(tmp.length());
+
+
+  // let tree = new QuadTree([], 4, new Rectangle(200, 200, 400, 400));
+  //
+  // for (let i = 0; i < 100; i++){
+  //   tree.addPoint(new Point(
+  //     new Vector([
+  //       Math.floor(Math.random() * 400),
+  //       Math.floor(Math.random() * 400)
+  //     ]),
+  //     new Vector([
+  //       1,
+  //       1
+  //     ])));
+  // }
+  //
+  // console.log(tree);
+</script>
+</body>
+</html>
