@@ -3,6 +3,8 @@ import {Point} from "./Point.js";
 import {QuadTree} from "./QuadTree.js";
 import {Rectangle} from "./Rectangle.js";
 
+// this class handles the drawing of all the things
+// it creates points, handles clicks, creates new frames and works with the quad tree.
 export class Draw {
   constructor(canvas, points) {
     this.points = points;
@@ -26,6 +28,7 @@ export class Draw {
     return [x, y];
   }
 
+  // click and drop functions had a different purpose than they have now, that's why there is commented code
   click(event) {
     // Reads a "mousedown" and remembers those coordinates.
     this.pressed = true;

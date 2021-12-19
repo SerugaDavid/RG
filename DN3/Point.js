@@ -1,5 +1,7 @@
 import {Vector} from "./Vector.js";
 
+// this class has everything to do with the point,
+// how it functions, how it moves, how it's drawn, how it bounces and collides.
 export class Point{
   constructor(point, direction) {
     this.point = point;

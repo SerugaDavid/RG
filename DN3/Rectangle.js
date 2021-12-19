@@ -1,3 +1,4 @@
+// this class only handles the rectangle of the specific node in a quadtree.
 export class Rectangle {
   constructor(x, y, w, h) {
     this.x = x;

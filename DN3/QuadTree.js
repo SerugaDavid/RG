@@ -2,6 +2,8 @@ import {Vector} from "./Vector.js";
 import {Point} from "./Point.js";
 import {Rectangle} from "./Rectangle.js";
 
+// this class is a QuadTree,
+// it saves points, devides them between its children and works with rectangles.
 export class QuadTree {
   constructor(points, max, rectangle, mesh) {
     this.rectangle = rectangle;
