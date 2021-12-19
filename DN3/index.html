@@ -28,6 +28,7 @@
 
         canvas.addEventListener("mousedown", event => draw.click(event));
         canvas.addEventListener("mouseup", event => draw.drop(event));
+        canvas.addEventListener("mousemove", event => draw.getEvent(event));
 
         window.requestAnimationFrame(()=>draw.newFrame());
     </script>

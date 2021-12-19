@@ -14,6 +14,8 @@ export class Draw {
     this.outerRect = new Rectangle(0, 0, canvas.width, canvas.height);
     this.mesh = true;
     this.qtree = new QuadTree(points, this.max, this.outerRect, this.mesh);
+    this.pressed = false;
+    this.event = null;
   }
 
   clickCoordinates(event){
@@ -26,16 +28,18 @@ export class Draw {
 
   click(event) {
     // Reads a "mousedown" and remembers those coordinates.
-    const coordinates = this.clickCoordinates(event);
-    this.clickVector = new Vector(coordinates);
+    this.pressed = true;
+    // const coordinates = this.clickCoordinates(event);
+    // this.clickVector = new Vector(coordinates);
   }
 
   drop(event) {
     // Reads a "mouseup" and creates a new point with direction.
-    const coordinates = this.clickCoordinates(event);
-    const point = new Vector(coordinates);
-    const directionVector = point.sub(this.clickVector).normalize().mulScalar(this.speed);
-    this.points.push(new Point(point, directionVector));
+    this.pressed = false;
+    // const coordinates = this.clickCoordinates(event);
+    // const point = new Vector(coordinates);
+    // const directionVector = point.sub(this.clickVector).normalize().mulScalar(this.speed);
+    // this.points.push(new Point(point, directionVector));
   }
 
   addPoints(n) {
@@ -45,7 +49,6 @@ export class Draw {
         this.points.push(this.createRandomPoint());
     }
     this.qtree = new QuadTree(this.points, this.max, this.outerRect, this.mesh);
-    console.log(this.qtree);
   }
 
   createRandomPoint() {
@@ -75,8 +78,21 @@ export class Draw {
     return [width, height];
   }
 
+  getEvent(event) {
+    this.event = event;
+  }
+
   newFrame() {
     // Moves every point on screen and draws it
+    // Maybe add points
+    if (this.pressed) {
+      const w = this.canvas.width;
+      const h = this.canvas.height;
+      const coordinates = this.clickCoordinates(this.event);
+      const point = new Vector(coordinates);
+      const directionVector = new Vector(this.randomCoords(w, h, true)).normalize().mulScalar(this.speed);
+      this.points.push(new Point(point, directionVector));
+    }
     for (let i = 0; i < this.points.length; i++) {
       this.points[i].move(this.canvas.width, this.canvas.height);
       // this.drawPoint(this.points[i]);
