@@ -11,7 +11,7 @@ class MazeBuilder {
     this.cols = 2 * this.width + 1;
     this.rows = 2 * this.height + 1;
 
-    this.maze = this.initArray([]);
+    this.maze = this.initArray(0);
 
     // place initial walls
     this.maze.forEach((row, r) => {
@@ -20,16 +20,16 @@ class MazeBuilder {
         {
           case 0:
           case this.rows - 1:
-            this.maze[r][c] = ["wall"];
+            this.maze[r][c] = 1;
             break;
 
           default:
             if((r % 2) == 1) {
               if((c == 0) || (c == this.cols - 1)) {
-                this.maze[r][c] = ["wall"];
+                this.maze[r][c] = 1;
               }
             } else if(c % 2 == 0) {
-              this.maze[r][c] = ["wall"];
+              this.maze[r][c] = 1;
             }
 
         }
@@ -38,13 +38,13 @@ class MazeBuilder {
       if(r == 0) {
         // place exit in top row
         let doorPos = this.posToSpace(this.rand(1, this.width));
-        this.maze[r][doorPos] = ["door", "exit"];
+        this.maze[r][doorPos] = 0;
       }
 
       if(r == this.rows - 1) {
         // place entrance in bottom row
         let doorPos = this.posToSpace(this.rand(1, this.width));
-        this.maze[r][doorPos] = ["door", "entrance"];
+        this.maze[r][doorPos] = 0;
       }
 
     });
@@ -118,7 +118,7 @@ class MazeBuilder {
     for(let i = this.posToWall(r1)-1; i <= this.posToWall(r2)+1; i++) {
       for(let j = this.posToWall(c1)-1; j <= this.posToWall(c2)+1; j++) {
         if((i == this.posToWall(horiz)) || (j == this.posToWall(vert))) {
-          this.maze[i][j] = ["wall"];
+          this.maze[i][j] = 1;
         }
       }
     }
@@ -129,22 +129,22 @@ class MazeBuilder {
 
     if(gaps[0]) {
       let gapPosition = this.rand(c1, vert);
-      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] = [];
+      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] = 0;
     }
 
     if(gaps[1]) {
       let gapPosition = this.rand(vert+1, c2+1);
-      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] = [];
+      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] = 0;
     }
 
     if(gaps[2]) {
       let gapPosition = this.rand(r1, horiz);
-      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] = [];
+      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] = 0;
     }
 
     if(gaps[3]) {
       let gapPosition = this.rand(horiz+1, r2+1);
-      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] = [];
+      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] = 0;
     }
 
     // recursively partition newly created chambers
@@ -156,128 +156,12 @@ class MazeBuilder {
 
   }
 
-  isGap(...cells) {
-    return cells.every((array) => {
-      let row, col;
-      [row, col] = array;
-      if(this.maze[row][col].length > 0) {
-        if(!this.maze[row][col].includes("door")) {
-          return false;
-        }
-      }
-      return true;
-    });
-  }
-
-  countSteps(array, r, c, val, stop) {
-
-    if(!this.inBounds(r, c)) {
-      return false; // out of bounds
-    }
-
-    if(array[r][c] <= val) {
-      return false; // shorter route already mapped
-    }
-
-    if(!this.isGap([r, c])) {
-      return false; // not traversable
-    }
-
-    array[r][c] = val;
-
-    if(this.maze[r][c].includes(stop)) {
-      return true; // reached destination
-    }
-
-    this.countSteps(array, r-1, c, val+1, stop);
-    this.countSteps(array, r, c+1, val+1, stop);
-    this.countSteps(array, r+1, c, val+1, stop);
-    this.countSteps(array, r, c-1, val+1, stop);
-
-  }
-
-  getKeyLocation() {
-
-    let fromEntrance = this.initArray();
-    let fromExit = this.initArray();
-
-    this.totalSteps = -1;
-
-    for(let j = 1; j < this.cols-1; j++) {
-      if(this.maze[this.rows-1][j].includes("entrance")) {
-        this.countSteps(fromEntrance, this.rows-1, j, 0, "exit");
-      }
-      if(this.maze[0][j].includes("exit")) {
-        this.countSteps(fromExit, 0, j, 0, "entrance");
-      }
-    }
-
-    let fc = -1, fr = -1;
-
-    this.maze.forEach((row, r) => {
-      row.forEach((cell, c) => {
-        if(typeof fromEntrance[r][c] == "undefined") {
-          return;
-        }
-        let stepCount = fromEntrance[r][c] + fromExit[r][c];
-        if(stepCount > this.totalSteps) {
-          fr = r;
-          fc = c;
-          this.totalSteps = stepCount;
-        }
-      });
-    });
-
-    return [fr, fc];
-  }
-
-  placeKey() {
-
-    let fr, fc;
-    [fr, fc] = this.getKeyLocation();
-
-    this.maze[fr][fc] = ["key"];
-
-  }
-
-  display(id) {
-
-    this.parentDiv = document.getElementById(id);
-
-    if(!this.parentDiv) {
-      alert("Cannot initialise maze - no element found with id \"" + id + "\"");
-      return false;
-    }
-
-    while(this.parentDiv.firstChild) {
-      this.parentDiv.removeChild(this.parentDiv.firstChild);
-    }
-
-    const container = document.createElement("div");
-    container.id = "maze";
-    container.dataset.steps = this.totalSteps;
-
-    this.maze.forEach((row) => {
-      let rowDiv = document.createElement("div");
-      row.forEach((cell) => {
-        let cellDiv = document.createElement("div");
-        if(cell) {
-          cellDiv.className = cell.join(" ");
-        }
-        rowDiv.appendChild(cellDiv);
-      });
-      container.appendChild(rowDiv);
-    });
-
-    this.parentDiv.appendChild(container);
-
-    return true;
-  }
-
 }
 
 
 
 
-let labirinit = new MazeBuilder(3, 3)
-console.log(labirinit.maze)
+const mazeSize = 11;
+const maze = new MazeBuilder(Math.floor(mazeSize/2), Math.floor(mazeSize/2));
+const mapGrid = maze.maze;
+console.log(mapGrid.length);
